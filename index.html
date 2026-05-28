@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donald Wright</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark: #0f1117;
+      --card: #181c24;
+      --card2: #1e2330;
+      --border: rgba(255,255,255,0.07);
+      --text: #e8eaf0;
+      --muted: #8b90a0;
+      --subtle: #555b6e;
+      --accent: #4f8ef7;
+      --accent2: #6ee7b7;
+      --sidebar-w: 280px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: var(--dark);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.7;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--card);
+      border-right: 1px solid var(--border);
+      position: fixed;
+      top: 0; left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 24px 32px;
+      z-index: 10;
+    }
+
+    .photo-wrap {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .photo-frame {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--accent);
+      background: var(--card2);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .photo-frame img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+
+    .photo-overlay {
+      position: absolute; inset: 0;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 4px; color: var(--muted);
+      transition: background 0.2s;
+    }
+    .photo-overlay:hover { background: rgba(0,0,0,0.4); color: var(--text); }
+    .photo-overlay svg { width: 22px; height: 22px; }
+    .photo-overlay span { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+    #photo-input { display: none; }
+
+    .sidebar-name {
+      font-family: 'Raleway', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text);
+      text-align: center;
+      margin-bottom: 4px;
+      letter-spacing: 0.02em;
+    }
+
+    .sidebar-role {
+      font-size: 12px;
+      color: var(--accent);
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .sidebar-divider {
+      width: 40px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin: 0 auto 28px;
+    }
+
+    /* Nav */
+    nav { width: 100%; margin-bottom: auto; }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-radius: 8px;
+      color: var(--muted);
+      text-decoration: none;
+      font-family: 'Raleway', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: background 0.15s, color 0.15s;
+      margin-bottom: 2px;
+    }
+    nav a:hover, nav a.active { background: rgba(79,142,247,0.12); color: var(--accent); }
+    nav a svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+    .sidebar-socials {
+      display: flex;
+      gap: 10px;
+      margin-top: 32px;
+    }
+
+    .sidebar-socials a {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      text-decoration: none;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .sidebar-socials a:hover { border-color: var(--accent); color: var(--accent); }
+    .sidebar-socials svg { width: 15px; height: 15px; }
+
+    /* ── Main content ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      padding: 64px 56px 100px;
+      max-width: calc(100% - var(--sidebar-w));
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 80px;
+      scroll-margin-top: 40px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .section-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+
+    .section-title span { color: var(--accent); }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── About ── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px 48px;
+    }
+
+    .about-bio {
+      grid-column: 1 / -1;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.85;
+    }
+
+    .about-bio strong { color: var(--text); font-weight: 600; }
+
+    .info-list { list-style: none; }
+
+    .info-list li {
+      display: flex;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13.5px;
+    }
+
+    .info-list li:last-child { border-bottom: none; }
+
+    .info-label {
+      color: var(--muted);
+      min-width: 90px;
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding-top: 2px;
+    }
+
+    .info-value { color: var(--text); }
+
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+      padding: 12px 24px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      font-family: 'Raleway', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: opacity 0.15s;
+    }
+    .dl-btn:hover { opacity: 0.85; }
+    .dl-btn svg { width: 16px; height: 16px; }
+
+    /* ── Experience timeline ── */
+    .timeline { position: relative; padding-left: 28px; }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px; top: 6px; bottom: 0;
+      width: 1px;
+      background: var(--border);
+    }
+
+    .tl-item { position: relative; margin-bottom: 36px; }
+    .tl-item:last-child { margin-bottom: 0; }
+
+    .tl-dot {
+      position: absolute;
+      left: -28px;
+      top: 6px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--dark);
+      box-shadow: 0 0 0 2px var(--accent);
+    }
+
+    .tl-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      transition: border-color 0.2s;
+    }
+    .tl-card:hover { border-color: rgba(79,142,247,0.3); }
+
+    .tl-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 6px;
+    }
+
+    .tl-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .tl-date {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(79,142,247,0.1);
+      border-radius: 4px;
+      padding: 3px 10px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tl-org {
+      font-size: 13px;
+      color: var(--accent2);
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .tl-desc {
+      font-size: 13.5px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .tl-desc ul { list-style: none; padding: 0; }
+    .tl-desc ul li { position: relative; padding-left: 16px; margin-bottom: 4px; }
+    .tl-desc ul li::before {
+      content: '▹';
+      position: absolute; left: 0;
+      color: var(--accent);
+      font-size: 12px;
+    }
+
+    /* ── Skills ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px 56px;
+    }
+
+    .skill-group-title {
+      font-family: 'Raleway', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.04em;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+    }
+
+    .skill-bar-item { margin-bottom: 16px; }
+    .skill-bar-item:last-child { margin-bottom: 0; }
+
+    .skill-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+
+    .skill-bar-label span:last-child { color: var(--accent); font-weight: 600; }
+
+    .skill-bar-track {
+      height: 4px;
+      background: var(--card2);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .skill-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 8px; }
+
+    .tag {
+      font-size: 12px;
+      color: var(--muted);
+      background: var(--card2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 5px 12px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .tag:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── Contact ── */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .contact-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .contact-icon {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: rgba(79,142,247,0.12);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .contact-icon svg { width: 18px; height: 18px; }
+
+    .contact-card-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--subtle);
+      margin-bottom: 3px;
+    }
+
+    .contact-card-value {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .contact-card-value a { color: var(--accent); text-decoration: none; }
+    .contact-card-value a:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 860px) {
+      .sidebar { display: none; }
+      .main { margin-left: 0; max-width: 100%; padding: 40px 24px 80px; }
+      .about-grid, .skills-grid, .contact-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .tl-header { flex-direction: column; gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="photo-wrap">
+      <div class="photo-frame" id="photo-frame" onclick="document.getElementById('photo-input').click()">
+        <div class="photo-overlay" id="photo-overlay">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          <span>Add photo</span>
+        </div>
+        <img id="photo-img" src="DWRIGHT.png" alt="Profile" style="display:none;position:absolute;inset:0;" />
+      </div>
+    </div>
+    <input type="file" id="photo-input" accept="image/*" />
+
+    <p class="sidebar-name">Donald Wright</p>
+    <p class="sidebar-role">Job Title</p>
+    <div class="sidebar-divider"></div>
+
+    <nav>
+      <a href="#about" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        About
+      </a>
+      <a href="#experience">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+        Experience
+      </a>
+      <a href="#education">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        Education
+      </a>
+      <a href="#skills">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Skills
+      </a>
+      <a href="#contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Contact
+      </a>
+    </nav>
+
+    <div class="sidebar-socials">
+      <a href="https://linkedin.com" aria-label="LinkedIn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10v7M7 7v.01M12 10v7m0-5a3 3 0 0 1 6 0v5"/></svg>
+      </a>
+      <a href="https://github.com" aria-label="GitHub">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+      </a>
+      <a href="https://twitter.com" aria-label="Twitter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/></svg>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- About -->
+    <section class="section" id="about">
+      <div class="section-header">
+        <h2 class="section-title">About <span>Me</span></h2>
+        <div class="section-line"></div>
+      </div>
+
+      <div class="about-grid">
+        <p class="about-bio">
+          <strong>Hello! I'm Your Name.</strong> A short, human description of what you do, what drives you, and what makes you the right person. Keep it genuine — two to three sentences is plenty.
+        </p>
+        <ul class="info-list">
+          <li><span class="info-label">Age</span><span class="info-value">Your Age</span></li>
+          <li><span class="info-label">Location</span><span class="info-value">City, State</span></li>
+          <li><span class="info-label">Email</span><span class="info-value">wrightdonny7@gmail.com</span></li>
+          <li><span class="info-label">Freelance</span><span class="info-value" style="color:var(--accent2);">Available</span></li>
+        </ul>
+        <ul class="info-list">
+          <li><span class="info-label">Phone</span><span class="info-value">+1 (937) 203-5938</span></li>
+          <li><span class="info-label">LinkedIn</span><span class="info-value">linkedin.com/in/yourhandle</span></li>
+          <li><span class="info-label">GitHub</span><span class="info-value">github.com/yourusername</span></li>
+          <li><span class="info-label">Website</span><span class="info-value">yoursite.com</span></li>
+        </ul>
+      </div>
+      <a href="#" class="dl-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Resume
+      </a>
+    </section>
+
+    <!-- Experience -->
+    <section class="section" id="experience">
+      <div class="section-header">
+        <h2 class="section-title">Work <span>Experience</span></h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <span class="tl-title">Senior Project Engineer</span>
+              <span class="tl-date">2022 – Present</span>
+            </div>
+            <p class="tl-org">Opti-Vise &middot; Remote</p>
+            <div class="tl-desc">
+              <ul>Opti-Vise is a specialized MSP with a focus on Cyber Security, SOC Compliance, CI/CD with a focus on cutting edge technologies and processes for streamlining operations. Client base consists of 65+ clients in all verticals including State and Local Government, Manufacturing, Credit Unions, Regional Banks, Non-Profits and many more. As Senior Project Manager my primary focus is Project Management for all projects in both customer facing and internal projects. Every project from conception, planning, run book execution, and steady state operations hand off is handled with in this role.<br><br>
+
+                <li>Led a team of N engineers to ship a feature used by X users, improving Y by Z%.</li>
+                <li>Designed a system that reduced infrastructure cost by $X per month.</li>
+                <li>Partnered with design and product to define the next two quarters' roadmap.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <span class="tl-title">Previous Job Title</span>
+              <span class="tl-date">2019 – 2022</span>
+            </div>
+            <p class="tl-org">Previous Company &middot; New York, NY</p>
+            <div class="tl-desc">
+              <ul>
+                <li>Built and maintained core services in Python and Go serving N req/s.</li>
+                <li>Improved test coverage from X% to Y%, cutting production incidents by half.</li>
+                <li>Mentored two junior engineers through onboarding and first projects.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <span class="tl-title">Earlier Role</span>
+              <span class="tl-date">2017 – 2019</span>
+            </div>
+            <p class="tl-org">Earlier Company &middot; Austin, TX</p>
+            <div class="tl-desc">
+              <ul>
+                <li>Contributed to front-end development using React and TypeScript.</li>
+                <li>Collaborated across two product teams in an agile environment.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section class="section" id="education">
+      <div class="section-header">
+        <h2 class="section-title">My <span>Volunteering</span></h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <span class="tl-title">Director of Technical Services</span>
+              <span class="tl-date">2017 – Current</span>
+            </div>
+            <p class="tl-org">Lewisburg Baptist Church &middot; Lewisburg,Ohio</p>
+            <p class="tl-desc">The Lewisburg Baptist Church is a medium sized church in Lewisburg Ohio, that provides 3 services a week and offers many ministries to accommodate the needs in the area. As Technical Director my primary focus is meeting the needs of the Church and the Ministries from a technical perspective. Leading the design, development and implementation of all technical processes with department heads and stakeholders. 
+</p>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-card">
+            <div class="tl-header">
+              <span class="tl-title">Certification or Course Name</span>
+              <span class="tl-date">2017</span>
+            </div>
+            <p class="tl-org">Issuing Organization</p>
+            <p class="tl-desc">Brief description of what you learned or what this certification covers.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Skills -->
+    <section class="section" id="skills">
+      <div class="section-header">
+        <h2 class="section-title">My <span>Skills</span></h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="skills-grid">
+        <div>
+          <p class="skill-group-title">Technical Skills</p>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>Python</span><span>90%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>TypeScript / React</span><span>85%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>Go</span><span>75%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:75%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>AWS / Cloud</span><span>80%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>SQL / Databases</span><span>85%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+          </div>
+        </div>
+        <div>
+          <p class="skill-group-title">Soft Skills</p>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>Leadership</span><span>90%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>Communication</span><span>95%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>Problem Solving</span><span>90%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>Teamwork</span><span>95%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div>
+          </div>
+          <div class="skill-bar-item">
+            <div class="skill-bar-label"><span>Adaptability</span><span>85%</span></div>
+            <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+          </div>
+        </div>
+        <div style="grid-column:1/-1">
+          <p class="skill-group-title" style="margin-bottom:14px">Tools & Technologies</p>
+          <div class="tag-cloud">
+            <span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Terraform</span>
+            <span class="tag">Git</span><span class="tag">Next.js</span><span class="tag">FastAPI</span>
+            <span class="tag">Node.js</span><span class="tag">Figma</span><span class="tag">Linux</span>
+            <span class="tag">PostgreSQL</span><span class="tag">Redis</span><span class="tag">CI/CD</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section" id="contact">
+      <div class="section-header">
+        <h2 class="section-title">Get In <span>Touch</span></h2>
+        <div class="section-line"></div>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          </div>
+          <div>
+            <p class="contact-card-label">Location</p>
+            <p class="contact-card-value">City, State, USA</p>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <p class="contact-card-label">Email</p>
+            <p class="contact-card-value"><a href="mailto:you@email.com">you@email.com</a></p>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 9.8 19.79 19.79 0 0 1 1 1.18 2 2 0 0 1 2.96 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.09 8.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 21 16z"/></svg>
+          </div>
+          <div>
+            <p class="contact-card-label">Phone</p>
+            <p class="contact-card-value">+1 (000) 000-0000</p>
+          </div>
+        </div>
+        <div class="contact-card">
+          <div class="contact-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><path d="M7 10v7M7 7v.01M12 10v7m0-5a3 3 0 0 1 6 0v5"/></svg>
+          </div>
+          <div>
+            <p class="contact-card-label">LinkedIn</p>
+            <p class="contact-card-value"><a href="https://linkedin.com/in/yourhandle">linkedin.com/in/yourhandle</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    document.getElementById('photo-input').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        const img = document.getElementById('photo-img');
+        img.src = ev.target.result;
+        img.style.display = 'block';
+        document.getElementById('photo-overlay').style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+    });
+
+    const sections = document.querySelectorAll('.section');
+    const navLinks = document.querySelectorAll('nav a');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(a => a.classList.remove('active'));
+          const link = document.querySelector(`nav a[href="#${entry.target.id}"]`);
+          if (link) link.classList.add('active');
+        }
+      });
+    }, { threshold: 0.35 });
+    sections.forEach(s => observer.observe(s));
+  </script>
+</body>
+</html>
